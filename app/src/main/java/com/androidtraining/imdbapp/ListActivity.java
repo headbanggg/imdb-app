@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -13,14 +14,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ListActivity extends AppCompatActivity {
     String baseUrl = "http://www.omdbapi.com/?apikey=20c154f9&s=";
     RequestQueue requestQueue;
     EditText etUserInput;
+    List<Movie> movieList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        movieList= new ArrayList<>();
         requestQueue= Volley.newRequestQueue(this);
         etUserInput = findViewById(R.id.etUserInput);
         etUserInput.addTextChangedListener(new TextWatcher() {
@@ -52,8 +62,25 @@ public class ListActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println(response);
-                Toast.makeText(ListActivity.this, response, Toast.LENGTH_SHORT).show();
+                try {
+                    JSONObject jsonObject= new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("Search");
+                    for (int i=0;i<jsonArray.length();i++) {
+                        JSONObject movieObject =jsonArray.getJSONObject(i);
+                        String title= movieObject.getString("Title");
+                        String year = movieObject.getString("Year");
+                        String imdbId= movieObject.getString("imdbID");
+                        String type = movieObject.getString("Type");
+                        String poster = movieObject.getString("Poster");
+
+                        Movie movie = new Movie(title,year,imdbId,type,poster);
+                        movieList.add(movie);
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
