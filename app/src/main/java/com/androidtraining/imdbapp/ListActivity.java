@@ -2,10 +2,11 @@ package com.androidtraining.imdbapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
-import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,6 +33,14 @@ public class ListActivity extends AppCompatActivity {
         movieList= new ArrayList<>();
         requestQueue= Volley.newRequestQueue(this);
         etUserInput = findViewById(R.id.etUserInput);
+        RecyclerView recyclerView = findViewById(R.id.rvMovie);
+        final RecyclerviewAdapter recyclerviewAdapter = new RecyclerviewAdapter(movieList);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ListActivity.this,LinearLayoutManager.VERTICAL,false);
+
+        recyclerView.setAdapter(recyclerviewAdapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
         etUserInput.addTextChangedListener(new TextWatcher() {
          @Override
          public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -45,6 +54,8 @@ public class ListActivity extends AppCompatActivity {
 
          @Override
          public void afterTextChanged(Editable s) {
+             movieList.clear();
+             recyclerviewAdapter.notifyDataSetChanged();
             filmDatasiIndir();
          }
      });
@@ -61,18 +72,22 @@ public class ListActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    JSONArray jsonArray=jsonObject.getJSONArray("Search");
-                    for (int i=0;i<jsonArray.length();i++){
 
-                        String title=jsonArray.getJSONObject(i).getString("Title");
-                        String year = jsonArray.getJSONObject(i).getString("Year");
-                        String imdbID = jsonArray.getJSONObject(i).getString("imdbID");
-                        String type = jsonArray.getJSONObject(i).getString("Type");
-                        String poster = jsonArray.getJSONObject(i).getString("Poster");
-                        Movie movie= new Movie(title,year,imdbID,type,poster);
+                try {
+                    JSONObject jsonObject= new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("Search");
+                    for (int i=0;i<jsonArray.length();i++) {
+                        JSONObject movieObject =jsonArray.getJSONObject(i);
+                        String title= movieObject.getString("Title");
+                        String year = movieObject.getString("Year");
+                        String imdbId= movieObject.getString("imdbID");
+                        String type = movieObject.getString("Type");
+                        String poster = movieObject.getString("Poster");
+
+                        Movie movie = new Movie(title,year,imdbId,type,poster);
                         movieList.add(movie);
+
+
                     }
 
                 } catch (JSONException e) {
