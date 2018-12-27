@@ -13,14 +13,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ListActivity extends AppCompatActivity {
     String baseUrl = "http://www.omdbapi.com/?apikey=20c154f9&s=";
     RequestQueue requestQueue;
     EditText etUserInput;
+    List<Movie> movieList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        movieList= new ArrayList<>();
         requestQueue= Volley.newRequestQueue(this);
         etUserInput = findViewById(R.id.etUserInput);
         etUserInput.addTextChangedListener(new TextWatcher() {
@@ -52,8 +61,24 @@ public class ListActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println(response);
-                Toast.makeText(ListActivity.this, response, Toast.LENGTH_SHORT).show();
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    JSONArray jsonArray=jsonObject.getJSONArray("Search");
+                    for (int i=0;i<jsonArray.length();i++){
+
+                        String title=jsonArray.getJSONObject(i).getString("Title");
+                        String year = jsonArray.getJSONObject(i).getString("Year");
+                        String imdbID = jsonArray.getJSONObject(i).getString("imdbID");
+                        String type = jsonArray.getJSONObject(i).getString("Type");
+                        String poster = jsonArray.getJSONObject(i).getString("Poster");
+                        Movie movie= new Movie(title,year,imdbID,type,poster);
+                        movieList.add(movie);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
