@@ -2,6 +2,8 @@ package com.androidtraining.imdbapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
@@ -33,6 +35,14 @@ public class ListActivity extends AppCompatActivity {
         movieList= new ArrayList<>();
         requestQueue= Volley.newRequestQueue(this);
         etUserInput = findViewById(R.id.etUserInput);
+        RecyclerView recyclerView = findViewById(R.id.rvMovie);
+        final RecyclerviewAdapter recyclerviewAdapter = new RecyclerviewAdapter(movieList);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ListActivity.this,LinearLayoutManager.VERTICAL,false);
+
+        recyclerView.setAdapter(recyclerviewAdapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
         etUserInput.addTextChangedListener(new TextWatcher() {
          @Override
          public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -46,6 +56,8 @@ public class ListActivity extends AppCompatActivity {
 
          @Override
          public void afterTextChanged(Editable s) {
+             movieList.clear();
+             recyclerviewAdapter.notifyDataSetChanged();
             filmDatasiIndir();
          }
      });
