@@ -18,31 +18,38 @@
         android:layout_height="300dp"
         android:layout_alignParentBottom="true"
         android:background="@color/movieDetailBackground"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:id="@+id/tvDetailTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/tvDetailYear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/tvDetailType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/tvDetailPlot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:layout_marginTop="10dp"
+            android:text="TextView"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
 </RelativeLayout>
