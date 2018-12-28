@@ -1,5 +1,7 @@
 package com.androidtraining.imdbapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -34,13 +36,24 @@ public class RecyclerviewAdapter extends  RecyclerView.Adapter<RecyclerviewAdapt
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, final int i) {
         myViewHolder.tvTitle.setText(movieList.get(i).getTitle());
         myViewHolder.tvYear.setText(movieList.get(i).getYear());
         myViewHolder.tvType.setText(movieList.get(i).getType());
         Glide.with(myViewHolder.imageView.getContext())
                 .load(movieList.get(i).getPoster())
                 .into(myViewHolder.imageView);
+
+        myViewHolder.cvMovieItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context myContext = myViewHolder.cvMovieItem.getContext();
+                Intent myIntent = new Intent(myContext,MovieDetailActivity.class);
+                myIntent.putExtra("myimdbid",movieList.get(i).getImdbId());
+                myContext.startActivity(myIntent);
+
+            }
+        });
 
     }
 
